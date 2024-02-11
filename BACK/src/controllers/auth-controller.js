@@ -1,0 +1,112 @@
+const createError = require("../utils/createError");
+const prisma = require("../config/prisma");
+const bcrypt = require("bcryptjs");
+const userService = require("../services/user-service");
+const jwt = require("jsonwebtoken");
+
+
+//* ส่วน Register --------------------------------------------------
+exports.register = async (req, res, next) => {
+  try {
+    const { name,email, password ,confirmpassword,phone} = req.body;
+
+    if (!name || !email || !password || !confirmpassword) {
+      return createError(400, "All form is required");
+    }
+
+    if (typeof name !== "string" || typeof email !== "string" || typeof password !== "string" || typeof confirmpassword !== "string") {
+      return createError(400, "Name or email or password or confirmpassword is invalid");
+    }
+
+    if(password !== confirmpassword){
+      return createError(400, "Password and confirmpassword not match");
+    }
+
+    const isUserExist = await userService.getUserByEmail(email);
+
+    if (isUserExist) {
+      return createError(400, "User already exist");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await userService.createUser(name, email, hashedPassword,phone);
+
+    res.json({ message: "register success" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
+//* ส่วน Login --------------------------------------------------
+exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return createError(400, "Email and password are required");
+    }
+
+    if (typeof email !== "string" || typeof password !== "string") {
+      return createError(400, "Email or password is invalid");
+    }
+
+    const isUserExist = await userService.getUserByEmail(email);
+
+    if (!isUserExist) {
+      return createError(400, "User is not found");
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, isUserExist.password)
+  
+    if (!isPasswordMatch) {
+      return createError(400, "Email or password is invalid");
+    }
+
+    const token = jwt.sign({ id: isUserExist.id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+
+    res.json({ token });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+exports.getme = (req ,res ,next)=>{
+  res.json(req.user)
+}
+
+
+
+
+
+
+
+
+exports.forgetPassword = (req, res, next) => {
+  const { email } = req.body;
+  // gen token -> สร้าง link -> ส่ง email
+  res.json({ email });
+};
+
+// https://api.codecamp.com/auth/forget-password/kdjfkdjfkdjkfjd
+exports.verifyForgetPassword = (req, res, next) => {
+  const { token } = req.params;
+  // logic check token
+  // redirect reset password -> ติด token
+  res.json({ token });
+};
+
+exports.resetPassword = (req, res, next) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  // check token
+  // เปลี่ยน Password
+  // เก็บ password ใหม่ ลง db
+  res.json({ token, password });
+};
