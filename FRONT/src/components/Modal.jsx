@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 export default function Modal(props) {
   const { el, closeModal, setTrigger } = props;
   const [input, setInput] = useState({
-    title: "",
-    dueDate: "",
-    status: "",
+    synopsis: "",
+    // dueDate: "",
+    // status: "",
   });
   const [status, setStatus] = useState([])
   
@@ -14,7 +14,7 @@ export default function Modal(props) {
     if(status.length) { return }
     const run = async () => {
       const token = localStorage.getItem('token')
-      const rs = await axios.get('http://localhost:8889/todos/all-status', {
+      const rs = await axios.get('http://localhost:8000/product/', {
         headers: {Authorization : `Bearer ${token}`}
       })
       setStatus(rs.data.status)

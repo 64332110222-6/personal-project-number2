@@ -2,6 +2,7 @@ const Joi = require("joi");
 
 exports.createProductSchema = Joi.object({
   volume: Joi.number().required(),
+  name: Joi.string().required(),
   synopsis: Joi.string().required(),
   stock: Joi.number(),
   unit: Joi.number(),
@@ -13,8 +14,8 @@ exports.createProductSchema = Joi.object({
 });
 
 
-exports.createPublishingSchema = Joi.object({
-  name: Joi.string().required(),
-  count: Joi.number(),
-});
+// exports.createPublishingSchema = Joi.object({
+//   name: Joi.string().required(),
+//   count: Joi.number(),
+// });
 //ทำแล้ว

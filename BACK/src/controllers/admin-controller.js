@@ -80,30 +80,22 @@ exports.updateProduct = async (req, res, next) => {
   }
 };
 
+
+
 exports.createPublishing = async (req, res, next) => {
   try {
-    const { name, count} = req.body;
-    if (!name) {
-      return createError(400, 'Product not found');
-    }
-    console.log(req.body)
+    const { name } = req.body;
     const publishing = await prisma.publishing.create({
       data: {
         name,
-        count,
       },
     });
-    const newPublishing= await prisma.publishing.findFirst({
-      where: {
-        id: publishing.id,
-      },
-    });
-
-    res.json({ newPublishing });
+    res.json({ publishing });
   } catch (err) {
     next(err);
   }
 };
+
 
 exports.createCategory = async (req, res, next) => {
   try {

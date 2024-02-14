@@ -8,6 +8,10 @@ const createError = require("./utils/createError");
 
 const authRoute = require("./routes/auth-route");
 const productRoute = require("./routes/product-route");
+const authorRoute = require("./routes/author-route");
+const categoryRoute = require("./routes/category-route");
+const publishingRoute = require("./routes/publishing-route");
+const seriesRoute = require("./routes/series-route");
 const adminRoute = require("./routes/admin-route");
 const authenticate = require("./middlewares/authenticate");
 const admin = require("./middlewares/admin");
@@ -19,6 +23,10 @@ app.use(express.json());
 
 app.use("/auth", authRoute);
 app.use("/product", productRoute);
+app.use("/author", authorRoute);
+app.use("/category", categoryRoute);
+app.use("/publishing", publishingRoute);
+app.use("/series", seriesRoute);
 app.use("/admin", authenticate, admin, adminRoute);
 
 app.use(errorHandler);
