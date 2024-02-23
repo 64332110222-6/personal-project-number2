@@ -1,9 +1,33 @@
 const cloudUpload = require("../utils/cloudUpload");
 const prisma = require("../config/prisma");
 const createError = require("../utils/createError");
-const { createProductSchema } = require("../validator/admin-validator");
-const { createPublishingSchema } = require("../validator/admin-validator");
+const { createProductSchema ,updateProductSchema} = require("../validator/admin-validator");
 
+//* My Product Landing---------------------------------------------
+exports.getMyProductsLanding = async (req, res, next) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        userId: req.user.id
+      },
+      include: {
+        publishing: true,
+        category: true,
+        author: true,
+        series: true,
+        product_img: true,
+      },
+    })
+
+    res.json({ products });
+  } catch (error) {
+    next(error)
+  }
+};
+
+
+
+//* Create Product---------------------------------------------
 exports.createProduct = async (req, res, next) => {
   try {
     const value = await createProductSchema.validateAsync(req.body);
@@ -72,9 +96,24 @@ exports.createProduct = async (req, res, next) => {
   }
 };
 
+
+//* Update Product---------------------------------------------
 exports.updateProduct = async (req, res, next) => {
   try {
-    res.json({ message: "Update Product" });
+    const { productId } = req.params
+    const value = await updateProductSchema.validateAsync(req.body);
+    // const value = req.data
+    console.log(productId)
+    console.log(req.body)
+    const updates = await prisma.product.update({
+      where: {
+        id: Number(productId),
+      },
+      data: {
+        ...value
+      }
+    })
+    res.json({ updates });
   } catch (err) {
     next(err);
   }
@@ -82,6 +121,24 @@ exports.updateProduct = async (req, res, next) => {
 
 
 
+//* Delete Product---------------------------------------------
+exports.deleteProduct = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const deletes = await prisma.product.delete({
+      where: {
+        id: Number(productId),
+        userId: req.user.id
+      },
+    });
+    res.json({ deletes });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+//* Create Publishing---------------------------------------------
 exports.createPublishing = async (req, res, next) => {
   try {
     const { name } = req.body;
@@ -97,6 +154,45 @@ exports.createPublishing = async (req, res, next) => {
 };
 
 
+
+//* Update Publishing---------------------------------------------
+exports.updatePublishing = async (req, res, next) => {
+  try {
+    const { publishingId } = req.params
+    const value = await req.body;
+    const updates = await prisma.publishing.update({
+      where: {
+        id: Number(publishingId),
+      },
+      data: {
+        ...value
+      }
+    })
+    res.json({ updates });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+//* Delete Publishing---------------------------------------------
+exports.deletePublishing = async (req, res, next) => {
+  try {
+    const { publishingId } = req.params;
+    const deletes = await prisma.publishing.delete({
+      where: {
+        id: Number(publishingId),
+      },
+    });
+    res.json({ deletes });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+//* Create Category---------------------------------------------
 exports.createCategory = async (req, res, next) => {
   try {
     const { name } = req.body;
@@ -111,6 +207,48 @@ exports.createCategory = async (req, res, next) => {
   }
 };
 
+
+
+//* Update Category---------------------------------------------
+exports.updateCategory = async (req, res, next) => {
+  try {
+    const { categoryId } = req.params
+    const value = await req.body;
+    const updates = await prisma.category.update({
+      where: {
+        id: Number(categoryId),
+      },
+      data: {
+        ...value
+      }
+    })
+    res.json({ updates });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+//* Delete Category---------------------------------------------
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    const { categoryId } = req.params;
+    const deletes = await prisma.category.delete({
+      where: {
+        id: Number(categoryId),
+      },
+    });
+    res.json({ deletes });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+
+
+//* Create Author---------------------------------------------
 exports.createAuthor = async (req, res, next) => {
   try {
     const { name } = req.body;
@@ -125,6 +263,47 @@ exports.createAuthor = async (req, res, next) => {
   }
 };
 
+
+
+//* Update Author---------------------------------------------
+exports.updateAuthor = async (req, res, next) => {
+  try {
+    const { authorId } = req.params
+    const value = await req.body;
+    const updates = await prisma.author.update({
+      where: {
+        id: Number(authorId),
+      },
+      data: {
+        ...value
+      }
+    })
+    res.json({ updates });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+//* Delete Author---------------------------------------------
+exports.deleteAuthor = async (req, res, next) => {
+  try {
+    const { authorId } = req.params;
+    const deletes = await prisma.author.delete({
+      where: {
+        id: Number(authorId),
+      },
+    });
+    res.json({ deletes });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+
+//* Create Series---------------------------------------------
 exports.createSeries = async (req, res, next) => {
   try {
     const { name } = req.body;
@@ -139,6 +318,47 @@ exports.createSeries = async (req, res, next) => {
   }
 };
 
+
+
+//* Update Series---------------------------------------------
+exports.updateSeries = async (req, res, next) => {
+  try {
+    const { seriesId } = req.params
+    const value = await req.body;
+    const updates = await prisma.series.update({
+      where: {
+        id: Number(seriesId),
+      },
+      data: {
+        ...value
+      }
+    })
+    res.json({ updates });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+//* Delete Series---------------------------------------------
+exports.deleteSeries = async (req, res, next) => {
+  try {
+    const { seriesId } = req.params;
+    const deletes = await prisma.series.delete({
+      where: {
+        id: Number(seriesId),
+      },
+    });
+    res.json({ deletes });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+
+//* Create Promotion---------------------------------------------
 exports.createPromotion = async (req, res, next) => {
   try {
     res.json({ message: "Create Promotion" });

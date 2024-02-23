@@ -1,12 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import TodoCard from "../components/TodoCard";
-import ModalEdit from "../components/ModalEdit";
+import ProductCard from "../components/ProductCard";
 
 export default function UserHome() {
-  //const [todos, setTodos] = useState([]);
   const [products, setProducts] = useState([]);
-  const [editIdx, setEditIdx] = useState(-1)
   const [trigger, setTrigger] = useState(false)
 
   useEffect(() => {
@@ -20,24 +17,16 @@ export default function UserHome() {
     run();
   }, [trigger]);
 
-  const openModal = (id) => {
-    let idx = products.findIndex( el=> el.id === id)
-    setEditIdx(idx)
-    document.getElementById("my_modal_2").showModal()
-  }
-
-  const closeModal = () => {
-    document.getElementById("my_modal_2").close()
-  }
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="text-center text-2xl text-blue-500">Your jobs</div>
-      {/* <ModalEdit el={products[editIdx]} closeModal={closeModal} setTrigger={setTrigger}/> */}
-      <div className="flex gap-4">
-        {products.map((el) => (
-          <TodoCard key={el.id} el={el} openModal={openModal} setTrigger={setTrigger}/>
-        ))}
+    <div className="grid place-items-center gap-4 mt-6">
+      <img src="\src\assets\braner.jpg" alt="Banner" className="w-full h-auto" style={{ width: '1300px', height: '300px', maxWidth: '100%' }} />
+      <div className="container mx-auto bg-gray-100 rounded-lg p-4">
+        <div className="text-start text-2xl pl-1 text-gray-800 pb-2 border-b-2 border-gray-700 font-serif">มังงะขายดี</div>
+        <div className="pt-4 flex gap-4">
+          {products.map((el) => (
+            <ProductCard key={el.id} el={el} setTrigger={setTrigger} />
+          ))}
+        </div>
       </div>
     </div>
   );

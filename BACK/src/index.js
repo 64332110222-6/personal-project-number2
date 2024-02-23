@@ -12,6 +12,7 @@ const authorRoute = require("./routes/author-route");
 const categoryRoute = require("./routes/category-route");
 const publishingRoute = require("./routes/publishing-route");
 const seriesRoute = require("./routes/series-route");
+const shippingRoute = require("./routes/shipping-route")
 const adminRoute = require("./routes/admin-route");
 const authenticate = require("./middlewares/authenticate");
 const admin = require("./middlewares/admin");
@@ -27,6 +28,7 @@ app.use("/author", authorRoute);
 app.use("/category", categoryRoute);
 app.use("/publishing", publishingRoute);
 app.use("/series", seriesRoute);
+app.use("/shipping", authenticate,shippingRoute);
 app.use("/admin", authenticate, admin, adminRoute);
 
 app.use(errorHandler);
